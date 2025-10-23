@@ -1,20 +1,22 @@
 package ShoppingCart;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class Language {
     private final String language;
     private final String country;
-    private static Locale locale;
+    private static ResourceBundle rb = null;
 
     public Language(String language, String country) {
         this.language = language;
         this.country = country;
-        locale = new Locale(language, country);
+        Locale locale = new Locale(language, country);
+        rb = ResourceBundle.getBundle("MessageBundle", locale);
     }
 
-    public static Locale getLocale() {
-        return locale;
+    public static ResourceBundle getRb() {
+        return rb;
     }
 
     public String getCountry() {

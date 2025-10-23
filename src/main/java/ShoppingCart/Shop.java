@@ -5,8 +5,7 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 
 public class Shop {
-    Locale locale = Language.getLocale();
-    private final ResourceBundle rb = ResourceBundle.getBundle("Localization.MessageBundle", locale);
+    ResourceBundle rb = Language.getRb();
     private final String[] listOfItems = {rb.getString("banana"), rb.getString("orange"),
             rb.getString("apple"), rb.getString("fish"),
             rb.getString("meat"), rb.getString("vegetables"),

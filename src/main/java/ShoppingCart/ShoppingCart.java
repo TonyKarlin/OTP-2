@@ -6,8 +6,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class ShoppingCart {
-    Locale locale = Language.getLocale();
-    private final ResourceBundle rb = ResourceBundle.getBundle("Localization.MessageBundle", locale);
+    ResourceBundle rb = Language.getRb();
     private final List<Item> cartItems;
 
     public ShoppingCart() {

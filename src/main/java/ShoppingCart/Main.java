@@ -7,19 +7,19 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Shop shop = new Shop();
-        ShoppingCart cart = new ShoppingCart();
 
         System.out.print("Enter language: ");
         String lang = sc.nextLine();
         System.out.print("Enter country: ");
         String country = sc.nextLine();
 
-        System.out.println("Selected language: " + lang + " " + country.toUpperCase());
+        System.out.println("Selected language: " + lang + " " + country.toUpperCase() + "\n");
 
         new Language(lang, country.toUpperCase());
-        Locale locale = Language.getLocale();
-        ResourceBundle rb = ResourceBundle.getBundle("Localization.MessageBundle", locale);
+        ResourceBundle rb = Language.getRb();
+
+        Shop shop = new Shop();
+        ShoppingCart cart = new ShoppingCart();
 
         shop.printList();
         System.out.println("\n" + rb.getString("initial_amount"));
@@ -45,7 +45,7 @@ public class Main {
 
 
             while (!cart.getCart().isEmpty()) {
-                System.out.print("\n" + rb.getString("position_input") + ": ");
+                System.out.println("\n" + rb.getString("position_input"));
                 String input = sc.nextLine();
                 if (input.equalsIgnoreCase("q")) break;
 
@@ -67,7 +67,7 @@ public class Main {
                 for (Item item : cart.getCart()) {
                     totalCost += item.getTotalCost();
                 }
-                System.out.println("\n" + rb.getString("total_cart_price") + totalCost + "€");
+                System.out.println("\n" + rb.getString("total_cart_price") + " " + totalCost + "€");
             } else {
                 System.out.println(rb.getString("empty_cart"));
             }
