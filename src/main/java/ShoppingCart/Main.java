@@ -8,9 +8,9 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter language: ");
+        System.out.print("Enter language (fi, en, sv, ja): ");
         String lang = sc.nextLine();
-        System.out.print("Enter country: ");
+        System.out.print("Enter country (FI, US, SE, JP): ");
         String country = sc.nextLine();
 
         System.out.println("Selected language: " + lang + " " + country.toUpperCase() + "\n");
