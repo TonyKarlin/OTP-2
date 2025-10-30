@@ -88,7 +88,7 @@ public class GUI extends Application {
         cartList.getItems().clear();
         double sum = 0.0;
         for (Item item : cart.getItems()) {
-            cartList.getItems().add(item.getName() + " - $" + item.getCost());
+            cartList.getItems().add(item.getQuantity() + " - $" + item.getCost());
         }
         totalCost.setText(bundle.getString("total") + " " +sum);
     }
@@ -97,7 +97,8 @@ public class GUI extends Application {
         cartList.getItems().clear();
         double sum = 0.0;
         for (Item item : cart.getItems()) {
-            cartList.getItems().add(item.getName() + " - $" + item.getCost() + " (X" + quantity + " * $" + price + ")");
+            cartList.getItems().add(item.getIndex() + " - $" + item.getCost() + " (X" + item.getQuantity() +
+                    " * $" + (item.getCost() / item.getQuantity()) + ")");
             sum += item.getCost();
         }
         totalCost.setText(bundle.getString("total") + " $" + String.format("%.2f", sum));

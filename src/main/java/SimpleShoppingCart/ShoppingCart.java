@@ -16,7 +16,7 @@ public class ShoppingCart {
     public void addItem(int count, double pricePer) {
         int cost = (int) (count * pricePer);
         totalCost += cost;
-        this.cartItems.add(new Item(index, cost));
+        this.cartItems.add(new Item(index, count, cost));
         index++;
     }
 
