@@ -61,7 +61,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t %DOCKERHUB_REPO%:% .'
+                bat 'docker build -t %DOCKERHUB_REPO% .'
             }
         }
 
