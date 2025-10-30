@@ -12,6 +12,7 @@ LABEL author="tonykarlin"
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
     libx11-6 libxext6 libxrender1 libxtst6 libxi6 libgtk-3-0 mesa-utils wget unzip \
+    fonts-noto-cjk fonts-ipafontic-gothic \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /javafx-sdk \
