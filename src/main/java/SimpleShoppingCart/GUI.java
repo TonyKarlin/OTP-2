@@ -21,6 +21,7 @@ public class GUI extends Application {
     private Label cartLabel;
     private ComboBox<String> langBox;
     private ComboBox<String> countryBox;
+    private Label totalCost;
 
     @Override
     public void start(Stage stage) {
@@ -40,6 +41,7 @@ public class GUI extends Application {
         addButton = new Button();
         clearButton = new Button();
         cartLabel = new Label();
+        totalCost = new Label();
 
         updateLocale();
 
@@ -48,7 +50,7 @@ public class GUI extends Application {
                 int count = Integer.parseInt(countField.getText());
                 double price = Double.parseDouble(priceField.getText());
                 cart.addItem(count, price);
-                updateCartList();
+                updateCartList(count, price);
                 countField.clear();
                 priceField.clear();
             } catch (NumberFormatException ex) {
@@ -58,15 +60,15 @@ public class GUI extends Application {
 
         clearButton.setOnAction(e -> {
             cart.clear();
-            updateCartList();
+            clearCartList();
         });
 
-        VBox inputBox = new VBox(5, langBox, countryBox, countField, priceField, addButton, clearButton);
+        VBox inputBox = new VBox(5, langBox, countryBox, countField, priceField, addButton, clearButton, totalCost);
         VBox mainBox = new VBox(10, inputBox, cartLabel, cartList);
         mainBox.setPadding(new Insets(10));
 
         stage.setScene(new Scene(mainBox, 300, 400));
-        stage.setTitle("Shopping Cart Application");
+        stage.setTitle("Tony Karlin");
         stage.show();
     }
 
@@ -81,10 +83,23 @@ public class GUI extends Application {
         cartLabel.setText(bundle.getString("cart"));
     }
 
-    private void updateCartList() {
+
+    private void clearCartList() {
         cartList.getItems().clear();
+        double sum = 0.0;
         for (Item item : cart.getItems()) {
             cartList.getItems().add(item.getName() + " - $" + item.getCost());
         }
+        totalCost.setText(bundle.getString("total") + " " +sum);
+    }
+
+    private void updateCartList(int quantity, double price) {
+        cartList.getItems().clear();
+        double sum = 0.0;
+        for (Item item : cart.getItems()) {
+            cartList.getItems().add(item.getName() + " - $" + item.getCost() + " (X" + quantity + " * $" + price + ")");
+            sum += item.getCost();
+        }
+        totalCost.setText(bundle.getString("total") + " $" + String.format("%.2f", sum));
     }
 }
