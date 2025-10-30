@@ -61,7 +61,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t %DOCKERHUB_REPO%:%DOCKER_IMAGE_TAG% .'
+                bat 'docker build -t %DOCKERHUB_REPO%:% .'
             }
         }
 
@@ -70,7 +70,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat '''
                         docker login -u %DOCKER_USER% -p %DOCKER_PASS%
-                        docker push %DOCKERHUB_REPO%:%DOCKER_IMAGE_TAG%
+                        docker push %DOCKERHUB_REPO%
                     '''
                 }
             }
