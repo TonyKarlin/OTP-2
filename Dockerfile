@@ -6,7 +6,7 @@
 #COPY src /app/src
 #RUN mvn package -DskipTests
 #CMD ["java", "-jar", "target/OTP-2-1.0-SNAPSHOT.jar", "SimpleShoppingCart.Main"]
-FROM openjdk:17-slim
+FROM openjdk:17-jsk-slim
 LABEL author="tonykarlin"
 
 WORKDIR /app
