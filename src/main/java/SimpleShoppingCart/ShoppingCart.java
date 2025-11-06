@@ -13,10 +13,10 @@ public class ShoppingCart {
         this.totalCost = 0;
     }
 
-    public void addItem(int count, double pricePer) {
+    public void addItem(String name, int count, double pricePer) {
         int cost = (int) (count * pricePer);
         totalCost += cost;
-        this.cartItems.add(new Item(index, count, cost));
+        this.cartItems.add(new Item(index, name, count, cost));
         index++;
     }
 

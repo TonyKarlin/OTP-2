@@ -16,3 +16,6 @@ CREATE TABLE IF NOT EXISTS item_translations
     name    VARCHAR(255) NOT NULL,
     FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE CASCADE
 );
+
+ALTER TABLE item_translations MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE item_translations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

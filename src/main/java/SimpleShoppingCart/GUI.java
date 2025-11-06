@@ -45,7 +45,6 @@ public class GUI extends Application {
 
         shopItemBox = new ComboBox<>();
         shopItemBox.setPrefWidth(150);
-        shopItemBox.setValue(shop.getListOfItems()[0]);
 
         countField = new TextField();
         priceField = new TextField();
@@ -77,8 +76,22 @@ public class GUI extends Application {
     }
 
     private void updateLocale() {
+        int selectedIndex = shopItemBox.getSelectionModel().getSelectedIndex();
+
         Locale locale = new Locale(langBox.getValue(), countryBox.getValue());
         bundle = ResourceBundle.getBundle("MessageBundle", locale);
+
+        List<String> localizedItems = new ArrayList<>();
+        for (String item : shop.getListOfItems()) {
+            localizedItems.add(bundle.getString(item.toLowerCase()));
+        }
+        shopItemBox.getItems().setAll(localizedItems);
+
+        if (selectedIndex >= 0 && selectedIndex < shopItemBox.getItems().size()) {
+            shopItemBox.getSelectionModel().select(selectedIndex);
+        } else {
+            shopItemBox.setValue(localizedItems.get(0));
+        }
 
         countField.setPromptText(bundle.getString("count"));
         priceField.setPromptText(bundle.getString("price"));
@@ -86,12 +99,6 @@ public class GUI extends Application {
         clearButton.setText(bundle.getString("clear"));
         cartLabel.setText(bundle.getString("cart"));
         saveButton.setText(bundle.getString("save"));
-
-        List<String> localizedItems = new ArrayList<>();
-        for (String item : shop.getListOfItems()) {
-            localizedItems.add(bundle.getString(item.toLowerCase()));
-        }
-        shopItemBox.getItems().setAll(localizedItems);
     }
 
     private void addItemToCart() {
@@ -99,18 +106,13 @@ public class GUI extends Application {
             try {
                 int count = Integer.parseInt(countField.getText());
                 double price = Double.parseDouble(priceField.getText());
-                String lang = langBox.getValue();
-                String itemName = "Item " + cart.getItems().size(); // Or get from user input
+                String itemName = shopItemBox.getValue();
 
-                ShoppingCartDao dao = new ShoppingCartDao();
-                int itemId = dao.insertItem(price, count);
-                dao.insertTranslation(itemId, lang, itemName);
-
-                cart.addItem(count, price);
-                updateCartList(count, price);
+                cart.addItem(itemName, count, price);
+                updateCartList();
                 countField.clear();
                 priceField.clear();
-            } catch (NumberFormatException | SQLException ex) {
+            } catch (NumberFormatException ex) {
                 System.out.println("Error " + ex);
             }
         });
@@ -142,18 +144,11 @@ public class GUI extends Application {
         totalCost.setText(bundle.getString("total") + " " +sum);
     }
 
-    private void updateCartList(int quantity, double price) {
+    private void updateCartList() {
         cartList.getItems().clear();
-        ShoppingCartDao dao = new ShoppingCartDao();
-        String lang = langBox.getValue();
         double sum = 0.0;
         for (Item item : cart.getItems()) {
-            String name = "";
-            try {
-                name = dao.getItemName(item.getIndex(), lang);
-            } catch (Exception e) {
-                System.out.println("Error: " + e);
-            }
+            String name = item.getName();
             cartList.getItems().add(name + " - $" + item.getCost() + " (X" + item.getQuantity() +
                     " * $" + (item.getCost() / item.getQuantity()) + ")");
             sum += item.getCost();
