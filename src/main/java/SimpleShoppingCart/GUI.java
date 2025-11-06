@@ -1,6 +1,6 @@
 package SimpleShoppingCart;
 
-import SimpleShoppingCart.Backend.ShoppingCartDao;
+import SimpleShoppingCart.Backend.ShoppingCartService;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -120,7 +120,7 @@ public class GUI extends Application {
 
     private void saveToDatabase() {
         saveButton.setOnAction(e -> {
-            ShoppingCartDao dao = new ShoppingCartDao();
+            ShoppingCartService dao = new ShoppingCartService();
             String lang = langBox.getValue();
             for (Item item : cart.getItems()) {
                 try {

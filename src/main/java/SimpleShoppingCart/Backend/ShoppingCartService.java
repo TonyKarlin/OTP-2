@@ -2,7 +2,7 @@ package SimpleShoppingCart.Backend;
 
 import java.sql.*;
 
-public class ShoppingCartDao {
+public class ShoppingCartService {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/shopping_cart_db";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "root";
