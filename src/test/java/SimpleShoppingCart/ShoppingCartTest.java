@@ -18,8 +18,8 @@ class ShoppingCartTest {
 
     @Test
     void addItem() {
-        cart.addItem(2, 10.0);
-        cart.addItem(5, 1.50);
+        cart.addItem("Banana", 2, 10.0);
+        cart.addItem("Fish", 5, 1.50);
         List<Item> items = cart.getItems();
         assertEquals(2, items.size());
         assertEquals(20.0, items.get(0).getCost());
@@ -29,8 +29,8 @@ class ShoppingCartTest {
 
     @Test
     void clear() {
-        cart.addItem(2, 10.0);
-        cart.addItem(5, 1.50);
+        cart.addItem("Banana", 2, 10.0);
+        cart.addItem("Fish", 5, 1.50);
         List<Item> items = cart.getItems();
         assertEquals(2, items.size());
         assertEquals(27.0, cart.getTotalCost());
@@ -42,8 +42,8 @@ class ShoppingCartTest {
 
     @Test
     void getItems() {
-        cart.addItem(2, 10.0);
-        cart.addItem(5, 1.50);
+        cart.addItem("Banana", 2, 10.0);
+        cart.addItem("Fish", 5, 1.50);
         List<Item> items = cart.getItems();
         assertNotNull(items);
         assertEquals(2, items.size());
@@ -51,8 +51,8 @@ class ShoppingCartTest {
 
     @Test
     void getTotalCost() {
-        cart.addItem(2, 10.0);
-        cart.addItem(5, 1.50);
+        cart.addItem("Banana", 2, 10.0);
+        cart.addItem("Fish", 5, 1.50);
         assertEquals(27.0, cart.getTotalCost());
 
     }
