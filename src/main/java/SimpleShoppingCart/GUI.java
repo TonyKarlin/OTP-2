@@ -1,5 +1,6 @@
 package SimpleShoppingCart;
 
+import SimpleShoppingCart.Backend.ShoppingCartDao;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -7,12 +8,17 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class GUI extends Application {
     private final ShoppingCart cart = new ShoppingCart();
+    Shop shop = new Shop();
     private final ListView<String> cartList = new ListView<>();
+    private ComboBox<String> shopItemBox;
     private ResourceBundle bundle;
     private TextField countField;
     private TextField priceField;
@@ -22,6 +28,7 @@ public class GUI extends Application {
     private ComboBox<String> langBox;
     private ComboBox<String> countryBox;
     private Label totalCost;
+    private Button saveButton;
 
     @Override
     public void start(Stage stage) {
@@ -36,35 +43,32 @@ public class GUI extends Application {
         langBox.setOnAction(e -> updateLocale());
         countryBox.setOnAction(e -> updateLocale());
 
+        shopItemBox = new ComboBox<>();
+        shopItemBox.setPrefWidth(150);
+        shopItemBox.setValue(shop.getListOfItems()[0]);
+
         countField = new TextField();
         priceField = new TextField();
         addButton = new Button();
         clearButton = new Button();
         cartLabel = new Label();
         totalCost = new Label();
+        saveButton = new Button();
 
         updateLocale();
 
-        addButton.setOnAction(e -> {
-            try {
-                int count = Integer.parseInt(countField.getText());
-                double price = Double.parseDouble(priceField.getText());
-                cart.addItem(count, price);
-                updateCartList(count, price);
-                countField.clear();
-                priceField.clear();
-            } catch (NumberFormatException ex) {
-                System.out.println("Error " + ex);
-            }
-        });
+        addItemToCart();
 
         clearButton.setOnAction(e -> {
             cart.clear();
             clearCartList();
         });
 
-        VBox inputBox = new VBox(5, langBox, countryBox, countField, priceField, addButton, clearButton, totalCost);
-        VBox mainBox = new VBox(10, inputBox, cartLabel, cartList);
+        saveToDatabase();
+
+        VBox inputBox = new VBox(5, langBox, countryBox, shopItemBox, countField, priceField,
+                addButton, clearButton, totalCost);
+        VBox mainBox = new VBox(10, inputBox, cartLabel, cartList, saveButton);
         mainBox.setPadding(new Insets(10));
 
         stage.setScene(new Scene(mainBox, 300, 400));
@@ -81,6 +85,51 @@ public class GUI extends Application {
         addButton.setText(bundle.getString("add"));
         clearButton.setText(bundle.getString("clear"));
         cartLabel.setText(bundle.getString("cart"));
+        saveButton.setText(bundle.getString("save"));
+
+        List<String> localizedItems = new ArrayList<>();
+        for (String item : shop.getListOfItems()) {
+            localizedItems.add(bundle.getString(item.toLowerCase()));
+        }
+        shopItemBox.getItems().setAll(localizedItems);
+    }
+
+    private void addItemToCart() {
+        addButton.setOnAction(e -> {
+            try {
+                int count = Integer.parseInt(countField.getText());
+                double price = Double.parseDouble(priceField.getText());
+                String lang = langBox.getValue();
+                String itemName = "Item " + cart.getItems().size(); // Or get from user input
+
+                ShoppingCartDao dao = new ShoppingCartDao();
+                int itemId = dao.insertItem(price, count);
+                dao.insertTranslation(itemId, lang, itemName);
+
+                cart.addItem(count, price);
+                updateCartList(count, price);
+                countField.clear();
+                priceField.clear();
+            } catch (NumberFormatException | SQLException ex) {
+                System.out.println("Error " + ex);
+            }
+        });
+    }
+
+    private void saveToDatabase() {
+        saveButton.setOnAction(e -> {
+            ShoppingCartDao dao = new ShoppingCartDao();
+            String lang = langBox.getValue();
+            for (Item item : cart.getItems()) {
+                try {
+                    int itemId = dao.insertItem(item.getCost(), item.getQuantity());
+                    dao.insertTranslation(itemId, lang, shopItemBox.getValue());
+                } catch (SQLException ex) {
+                    System.out.println("Error saving item: " + ex);
+                }
+            }
+            System.out.println("Cart saved to database.");
+        });
     }
 
 
@@ -95,9 +144,17 @@ public class GUI extends Application {
 
     private void updateCartList(int quantity, double price) {
         cartList.getItems().clear();
+        ShoppingCartDao dao = new ShoppingCartDao();
+        String lang = langBox.getValue();
         double sum = 0.0;
         for (Item item : cart.getItems()) {
-            cartList.getItems().add(item.getIndex() + " - $" + item.getCost() + " (X" + item.getQuantity() +
+            String name = "";
+            try {
+                name = dao.getItemName(item.getIndex(), lang);
+            } catch (Exception e) {
+                System.out.println("Error: " + e);
+            }
+            cartList.getItems().add(name + " - $" + item.getCost() + " (X" + item.getQuantity() +
                     " * $" + (item.getCost() / item.getQuantity()) + ")");
             sum += item.getCost();
         }
